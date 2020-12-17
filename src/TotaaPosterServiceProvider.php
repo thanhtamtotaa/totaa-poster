@@ -2,7 +2,10 @@
 
 namespace Totaa\TotaaPoster;
 
+use Livewire\Livewire;
 use Illuminate\Support\ServiceProvider;
+use Totaa\TotaaPoster\Http\Livewire\NhomLivewire;
+use Totaa\TotaaPoster\Http\Livewire\CaNhanLivewire;
 
 class TotaaPosterServiceProvider extends ServiceProvider
 {
@@ -15,9 +18,9 @@ class TotaaPosterServiceProvider extends ServiceProvider
          * Optional methods to load your package assets
          */
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'totaa-poster');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'totaa-poster');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'totaa-poster');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
+        $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -63,5 +66,10 @@ class TotaaPosterServiceProvider extends ServiceProvider
         $this->app->singleton('totaa-poster', function () {
             return new TotaaPoster;
         });
+
+        if (class_exists(Livewire::class)) {
+            Livewire::component('totaa-poster::canhan-livewire', CaNhanLivewire::class);
+            Livewire::component('totaa-poster::nhom-livewire', NhomLivewire::class);
+        }
     }
 }
