@@ -63,6 +63,32 @@ class CaNhanLivewire extends Component
     }
 
     /**
+     * Custom attributes
+     *
+     * @var array
+     */
+    protected $validationAttributes = [
+        'chinhanh' => 'đơn vị',
+        'team_id' => 'nhóm',
+        'turn_id' => 'đợt đăng ký',
+        'tencon' => 'họ và tên con',
+        'ngaysinh' => 'ngày sinh của con',
+        'gioitinh' => 'giới tính con',
+        'tensua' => 'tên sữa',
+        'trongluongsua' => 'trọng lượng',
+        'hangsua' => 'hãng sữa',
+        'loaisua' => 'loại sữa',
+        'xuatxu' => 'xuất xứ',
+        'nuocsanxuat' => 'nước sản xuất',
+        'soluongsua' => 'số lượng',
+        'tenbim_id' => 'tên bỉm',
+        'loaibim' => 'loại bỉm',
+        'size' => 'size bỉm',
+        'soluongbim' => 'số lương',
+        'ghichu' => 'ghi chú',
+    ];
+
+    /**
      * render view
      *
      * @return void
@@ -98,8 +124,10 @@ class CaNhanLivewire extends Component
 
     public function updatedTeamId()
     {
-        $this->belongto_mnv = NULL;
-        $this->tdv_arrays = Team::find($this->team_id)->team_members()->select("mnv", "full_name")->get()->toArray();
+        if (!!$this->team_id) {
+            $this->belongto_mnv = NULL;
+            $this->tdv_arrays = Team::find($this->team_id)->team_members()->select("mnv", "full_name")->get()->toArray();
+        }
     }
 
     public function updatedTinhId()
