@@ -27,8 +27,8 @@ class CreatePosterListsTable extends Migration
             $table->bigInteger('mucthuong_id')->unsigned()->nullable()->default(null);
             $table->bigInteger('trangthai_id')->unsigned()->nullable()->default(null);
             $table->boolean('active')->nullable()->default(null);
+            $table->string('belongto_mnv', 10)->nullable()->default(null);
             $table->string('created_by_mnv', 10)->nullable()->default(null);
-            $table->string('order_by_mnv', 10)->nullable()->default(null);
             $table->unsignedBigInteger('created_by')->nullable()->default(null);
             $table->unsignedBigInteger('updated_by')->nullable()->default(null);
             $table->unsignedBigInteger('deleted_by')->nullable()->default(null);
@@ -40,13 +40,8 @@ class CreatePosterListsTable extends Migration
             }
 
             if (class_exists(BfoInfo::class)) {
+                $table->foreign('belongto_mnv')->references('mnv')->on(with(new BfoInfo)->getTable())->onDelete('SET NULL')->onUpdate('cascade');
                 $table->foreign('created_by_mnv')->references('mnv')->on(with(new BfoInfo)->getTable())->onDelete('SET NULL')->onUpdate('cascade');
-                $table->foreign('order_by_mnv')->references('mnv')->on(with(new BfoInfo)->getTable())->onDelete('SET NULL')->onUpdate('cascade');
-            }
-
-            if (class_exists(BfoInfo::class)) {
-                $table->foreign('created_by_mnv')->references('mnv')->on(with(new BfoInfo)->getTable())->onDelete('SET NULL')->onUpdate('cascade');
-                $table->foreign('order_by_mnv')->references('mnv')->on(with(new BfoInfo)->getTable())->onDelete('SET NULL')->onUpdate('cascade');
             }
 
             if (class_exists(Poster_Name::class)) {
