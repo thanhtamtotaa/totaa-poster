@@ -17,7 +17,7 @@ class TotaaPosterServiceProvider extends ServiceProvider
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'totaa-poster');
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'totaa-poster');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        // $this->loadRoutesFrom(__DIR__.'/../routes/routes.php');
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -41,6 +41,13 @@ class TotaaPosterServiceProvider extends ServiceProvider
 
             // Registering package commands.
             // $this->commands([]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | Seed Service Provider need on boot() method
+            |--------------------------------------------------------------------------
+            */
+            $this->app->register(SeedServiceProvider::class);
         }
     }
 
