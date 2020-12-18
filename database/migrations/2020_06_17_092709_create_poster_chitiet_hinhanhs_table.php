@@ -18,7 +18,7 @@ class CreatePosterChitietHinhanhsTable extends Migration
         Schema::create('poster_chitiet_hinhanhs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('poster_chitiet_id')->unsigned()->nullable()->default(null);
-            $table->longText('google_drive_id')->nullable()->default(null);
+            $table->longText('totaa_file_id')->nullable()->default(null);
             $table->boolean('active')->nullable()->default(null);
             $table->string('belongto_mnv', 10)->nullable()->default(null);
             $table->string('created_by_mnv', 10)->nullable()->default(null);
