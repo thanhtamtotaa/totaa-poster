@@ -6,19 +6,26 @@ use Auth;
 use Livewire\Component;
 use Totaa\TotaaTeam\Models\Team;
 use Illuminate\Support\Facades\Cache;
-use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai;
 use Totaa\TotaaDonvi\Models\TotaaTinh;
 use Totaa\TotaaDonvi\Models\TotaaHuyen;
+use Totaa\TotaaPoster\Models\Poster\Poster_Name;
+use Totaa\TotaaPoster\Models\Poster\Poster_BeMat;
+use Totaa\TotaaPoster\Models\Poster\Poster_HinhThuc;
+use Totaa\TotaaPoster\Models\Poster\Poster_MucThuong;
+use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai;
+use Livewire\WithFileUploads;
 
 class CaNhanLivewire extends Component
 {
+    use WithFileUploads;
+
     /**
     * Các biến sử dụng trong Component
     *
     * @var mixed
     */
-   public $diadiem_id, $team_id, $belongto_mnv, $loaidiadiem_id, $tendiadiem, $chudiadiem, $phone, $tinh_id, $huyen_id, $xa_id, $diachi, $thongtinkhac;
-   public $bfo_info, $modal_title, $toastr_message, $add_diemdan_step, $team_arrays = [], $tdv_arrays = [], $diadiem_phanloai_arrays = [], $tinh_arrays = [], $huyen_arrays = [], $xa_arrays = [];
+   public $diadiem_id, $team_id, $belongto_mnv, $loaidiadiem_id, $tendiadiem, $chudiadiem, $phone, $tinh_id, $huyen_id, $xa_id, $diachi, $thongtinkhac, $poster_name_id, $poster_hinhthuc_id, $poster_bemat_id, $ngang, $doc, $vitridan, $mucthuong_id, $hinhanh1, $hinhanh2, $hinhanh3, $ghichu;
+   public $bfo_info, $modal_title, $toastr_message, $add_diemdan_step, $team_arrays = [], $tdv_arrays = [], $diadiem_phanloai_arrays = [], $tinh_arrays = [], $huyen_arrays = [], $xa_arrays = [], $poster_name_arrays = [], $poster_hinhthuc_arrays = [], $poster_bemat_arrays =[], $poster_mucthuong_arrays = [];
 
     /**
      * Cho phép cập nhật updateMode
@@ -59,6 +66,17 @@ class CaNhanLivewire extends Component
             'xa_id' => 'required|exists:list_xas,id',
             'diachi' => 'required',
             'thongtinkhac' => 'nullable',
+            'poster_name_id' => 'required|exists:poster_names,id',
+            'poster_hinhthuc_id' => 'required|exists:poster_hinhthucs,id',
+            'poster_bemat_id' => 'required|exists:poster_bemats,id',
+            'ngang' => 'required|numeric|integer',
+            'doc' => 'required|numeric|integer',
+            'vitridan' => 'required',
+            'mucthuong_id' => 'required|exists:poster_mucthuongs,id',
+            'hinhanh1' => 'required|file|image',
+            'hinhanh2' => 'required|file|image',
+            'hinhanh3' => 'nullable|file|image',
+            'ghichu' => 'nullable',
         ];
     }
 
@@ -68,23 +86,26 @@ class CaNhanLivewire extends Component
      * @var array
      */
     protected $validationAttributes = [
-        'chinhanh' => 'đơn vị',
+        'belongto_mnv' => 'trình dược viên',
         'team_id' => 'nhóm',
-        'turn_id' => 'đợt đăng ký',
-        'tencon' => 'họ và tên con',
-        'ngaysinh' => 'ngày sinh của con',
-        'gioitinh' => 'giới tính con',
-        'tensua' => 'tên sữa',
-        'trongluongsua' => 'trọng lượng',
-        'hangsua' => 'hãng sữa',
-        'loaisua' => 'loại sữa',
-        'xuatxu' => 'xuất xứ',
-        'nuocsanxuat' => 'nước sản xuất',
-        'soluongsua' => 'số lượng',
-        'tenbim_id' => 'tên bỉm',
-        'loaibim' => 'loại bỉm',
-        'size' => 'size bỉm',
-        'soluongbim' => 'số lương',
+        'loaidiadiem_id' => 'loại địa điểm',
+        'tendiadiem' => 'tên địa điểm',
+        'chudiadiem' => 'chủ địa điểm',
+        'tinh_id' => 'tỉnh',
+        'huyen_id' => 'huyện',
+        'xa_id' => 'xã',
+        'diachi' => 'địa chỉ',
+        'thongtinkhac' => 'thông tin khác',
+        'poster_name_id' => 'tên poster',
+        'poster_hinhthuc_id' => 'hình thức poster',
+        'poster_bemat_id' => 'bề mặt',
+        'ngang' => 'ngang',
+        'doc' => 'dọc',
+        'vitridan' => 'vị trí dán',
+        'mucthuong_id' => 'mức thưởng',
+        'hinhanh1' => 'hình ảnh 1',
+        'hinhanh2' => 'hình ảnh 2',
+        'hinhanh3' => 'hình ảnh 3',
         'ghichu' => 'ghi chú',
     ];
 
@@ -109,6 +130,10 @@ class CaNhanLivewire extends Component
         $this->team_arrays = Team::where("active", true)->where("kenh_kd_id", 2)->select("id", "name")->get()->toArray();
         $this->diadiem_phanloai_arrays = DiaDiem_PhanLoai::where("active", true)->select("id", "name")->get()->toArray();
         $this->tinh_arrays = TotaaTinh::where("active", true)->where("poster", true)->orderBy('order', 'asc')->orderBy('name', 'asc')->select("id", "level", "name")->get()->toArray();
+        $this->poster_name_arrays = Poster_Name::where("active", true)->select("id", "name")->get()->toArray();
+        $this->poster_hinhthuc_arrays = Poster_HinhThuc::where("active", true)->select("id", "name")->get()->toArray();
+        $this->poster_bemat_arrays = Poster_BeMat::where("active", true)->select("id", "name")->get()->toArray();
+        $this->poster_mucthuong_arrays = Poster_MucThuong::where("active", true)->select("id", "mucthuong")->get()->toArray();
     }
 
     /**
@@ -178,7 +203,7 @@ class CaNhanLivewire extends Component
         $this->toastr_message = "Thêm điểm dán thành công";
         $this->editStatus = false;
         $this->updateMode = false;
-        $this->add_diemdan_step = 1;
+        $this->add_diemdan_step = 2;
 
         $this->dispatchBrowserEvent('show_modal', "#add_edit_modal");
     }
@@ -221,6 +246,23 @@ class CaNhanLivewire extends Component
     public function back_step($step)
     {
         $this->add_diemdan_step = $step;
+    }
+
+    /**
+     * back_step method
+     *
+     * @return void
+     */
+    public function save_diemdan()
+    {
+        if ($this->bfo_info->cannot("add-poster")) {
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        $this->validate();
+
+        dd($this->hinhanh1);
     }
 
 }
