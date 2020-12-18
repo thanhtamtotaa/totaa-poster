@@ -219,12 +219,169 @@
 
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
-                                    <label for="poster_name" class="col-form-label">Tên Poster:</label>
-                                    <div id="poster_name_div">
-                                        <select class="form-control" name="poster_name" id="poster_name" required style="width: 100%"  data-msg="<i class='fas mr-1 fa-exclamation-circle'></i>Vui lòng chọn Poster">
-                                            <option selected></option>
+                                    <label class="col-form-label" for="poster_name_id">Tên Poster:</label>
+                                    <div class="select2-success" id="poster_name_id_div">
+                                        <select class="form-control px-2 select2-totaa" totaa-placeholder="Chọn Poster ..." totaa-search="6" wire:model="poster_name_id" id="poster_name_id" style="width: 100%">
+                                            @if (!!count($poster_name_arrays))
+                                                <option selected></option>
+                                                @foreach ($poster_name_arrays as $poster_name_array)
+                                                    <option value="{{ $poster_name_array["id"] }}">{{ $poster_name_array["name"] }}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
+                                    @error('poster_name_id')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label" for="poster_hinhthuc_id">Hình thức Poster:</label>
+                                    <div class="select2-success" id="poster_hinhthuc_id_div">
+                                        <select class="form-control px-2 select2-totaa" totaa-placeholder="Chọn hình thức Poster ..." totaa-search="10" wire:model="poster_hinhthuc_id" id="poster_hinhthuc_id" style="width: 100%">
+                                            @if (!!count($poster_hinhthuc_arrays))
+                                                <option selected></option>
+                                                @foreach ($poster_hinhthuc_arrays as $poster_hinhthuc_array)
+                                                    <option value="{{ $poster_hinhthuc_array["id"] }}">{{ $poster_hinhthuc_array["name"] }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    @error('poster_hinhthuc_id')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label" for="poster_bemat_id">Chất liệu bề mặt:</label>
+                                    <div class="select2-success" id="poster_bemat_id_div">
+                                        <select class="form-control px-2 select2-totaa" totaa-placeholder="Chọn chất liệu bề mặt ..." totaa-search="10" wire:model="poster_bemat_id" id="poster_bemat_id" style="width: 100%">
+                                            @if (!!count($poster_bemat_arrays))
+                                                <option selected></option>
+                                                @foreach ($poster_bemat_arrays as $poster_bemat_array)
+                                                    <option value="{{ $poster_bemat_array["id"] }}">{{ $poster_bemat_array["name"] }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    @error('poster_bemat_id')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="mb-3">
+                                    <label class="col-form-label">Kích thước Poster:</label>
+                                    <div class="d-flex">
+
+                                        <div class="ngang">
+                                            <label class="col-form-label p-0">
+                                                <input type="text" class="form-control px-2" id="ngang" wire:model="ngang" autocomplete="off" placeholder="Ngang" pattern="\d+">
+                                            </label>
+                                            @error('ngang')
+                                                <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i></label>
+                                            @enderror
+                                        </div><a class="mt-2 mx-3">x</a>
+
+                                        <div class="doc">
+                                            <label class="col-form-label p-0">
+                                                <input type="text" class="form-control px-2" id="doc" wire:model="doc" autocomplete="off" placeholder="Dọc" pattern="\d+">
+                                            </label>
+                                            @error('doc')
+                                                <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i></label>
+                                            @enderror
+                                        </div><i class="mt-2">(cm)</i>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label" for="vitridan">Vị trí dán:</label>
+                                    <div id="vitridan_div">
+                                        <input type="text" class="form-control px-2" wire:model.lazy="vitridan" id="vitridan" style="width: 100%" placeholder="Mô tả vị trí dán ..." autocomplete="off">
+                                    </div>
+                                    @error('vitridan')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label class="col-form-label" for="mucthuong_id">Mức trả thưởng:</label>
+                                    <div class="select2-success" id="mucthuong_id_div">
+                                        <select class="form-control px-2 select2-totaa" totaa-placeholder="Chọn mức trả thưởng ..." totaa-search="10" wire:model="mucthuong_id" id="mucthuong_id" style="width: 100%">
+                                            @if (!!count($poster_mucthuong_arrays))
+                                                <option selected></option>
+                                                @foreach ($poster_mucthuong_arrays as $poster_mucthuong_array)
+                                                    <option value="{{ $poster_mucthuong_array["id"] }}">{{ $poster_mucthuong_array["mucthuong"] }}</option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                    </div>
+                                    @error('mucthuong_id')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group mb-1">
+                                    <label class="col-form-label">Hình ảnh:</label>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group mb-1">
+                                    <div>
+                                        <input type="file" accept="image/*" class="form-control px-2" id="hinhanh1" wire:model="hinhanh1" style="width: 100%">
+                                    </div>
+                                    @error('hinhanh1')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group mb-1">
+                                    <div>
+                                        <input type="file" accept="image/*" class="form-control px-2" wire:model="hinhanh2" style="width: 100%">
+                                    </div>
+                                    @error('hinhanh2')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <div>
+                                        <input type="file" accept="image/*" class="form-control px-2" wire:model="hinhanh3" style="width: 100%">
+                                    </div>
+                                    @error('hinhanh3')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="col-form-label" for="ghichu">Ghi chú:</label>
+                                    <div>
+                                        <textarea class="form-control px-2" id="ghichu" wire:model.lazy="ghichu" placeholder="Các thông tin khác (nếu có)..." autocomplete="off" style="width: 100%"></textarea>
+                                    </div>
+                                    @error('ghichu')
+                                        <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
+                                    @enderror
                                 </div>
                             </div>
 
@@ -243,7 +400,7 @@
 
                 @if ($add_diemdan_step == 2)
                     <button wire:loading.attr="disabled" wire:click.prevent="back_step(1)" class="btn btn-danger"><span class="fas fa-backward mr-2"></span>Quay lại</button>
-                    <button wire:loading.attr="disabled" wire:click.prevent="save_diemdan()" class="btn btn-success">Xác nhận<span class="fas fa-fast-forward ml-2"></span></button>
+                    <button wire:loading.attr="disabled" wire:click.prevent="save_diemdan()" class="btn btn-success" totaa-block-ui>Xác nhận<span class="fas fa-fast-forward ml-2"></span></button>
                 @endif
 
             </div>
