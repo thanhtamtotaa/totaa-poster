@@ -27,6 +27,11 @@
         });
     })
 
+    //Gọi view edit role
+    $(document).on("click", "[totaa-block-ui]", function() {
+        ToTaa_BlockUI();
+    });
+
     //Block UI khi ấn thêm mới
     Livewire.on('add_diemdan', function() {
         ToTaa_BlockUI();
@@ -57,7 +62,6 @@
 
             if ($("select.select2-totaa").length != 0) {
                 $("select.select2-totaa").each(function(e) {
-                    console.log(4545);
                     $(this)
                     .wrap('<div class="position-relative"></div>')
                     .select2({
@@ -78,5 +82,18 @@
             });
         });
     }
+
+    window.addEventListener('livewire-upload-start', event => {
+        console.log(event);
+    })
+    window.addEventListener('livewire-upload-finish', event => {
+        console.log(event);
+    })
+    window.addEventListener('livewire-upload-error', event => {
+        console.log(event);
+    })
+    window.addEventListener('livewire-upload-progress', event => {
+        console.log(event);
+    })
 
 </script>
