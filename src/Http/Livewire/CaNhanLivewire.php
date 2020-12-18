@@ -14,10 +14,12 @@ use Totaa\TotaaPoster\Models\Poster\Poster_HinhThuc;
 use Totaa\TotaaPoster\Models\Poster\Poster_MucThuong;
 use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai;
 use Livewire\WithFileUploads;
+use Totaa\TotaaFileUpload\Traits\TotaaFileUploadTraits;
 
 class CaNhanLivewire extends Component
 {
     use WithFileUploads;
+    use TotaaFileUploadTraits;
 
     /**
     * Các biến sử dụng trong Component
@@ -170,6 +172,12 @@ class CaNhanLivewire extends Component
             $this->xa_id = NULL;
             $this->xa_arrays = TotaaHuyen::find($this->huyen_id)->xas()->orderBy('order', 'asc')->orderBy('name', 'asc')->select("id", "level", "name")->get()->toArray();
         }
+    }
+
+    public function updatedHinhanh1()
+    {
+        $this->save_to_drive($this->hinhanh1, "ádasdsda", $this->hinhanh1->getClientOriginalName());
+        //dd($this->hinhanh1);
     }
 
     /**
