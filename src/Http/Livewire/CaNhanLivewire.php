@@ -174,12 +174,6 @@ class CaNhanLivewire extends Component
         }
     }
 
-    public function updatedHinhanh1()
-    {
-        $this->save_to_drive($this->hinhanh1, "ádasdsda", $this->hinhanh1->getClientOriginalName());
-        //dd($this->hinhanh1);
-    }
-
     /**
      * cancel
      *
