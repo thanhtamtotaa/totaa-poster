@@ -15,6 +15,7 @@ use Totaa\TotaaPoster\Models\Poster\Poster_MucThuong;
 use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai;
 use Livewire\WithFileUploads;
 use Totaa\TotaaFileUpload\Traits\TotaaFileUploadTraits;
+use Illuminate\Support\Facades\Validator;
 
 class CaNhanLivewire extends Component
 {
@@ -42,7 +43,7 @@ class CaNhanLivewire extends Component
      *
      * @var array
      */
-    protected $listeners = ['add_diemdan', ];
+    protected $listeners = ['add_diemdan', 'save_diemdan', ];
 
         /**
      * Validation rules
@@ -75,7 +76,7 @@ class CaNhanLivewire extends Component
             'doc' => 'required|numeric|integer',
             'vitridan' => 'required',
             'mucthuong_id' => 'required|exists:poster_mucthuongs,id',
-            'hinhanh1' => 'required|file|image',
+            //'hinhanh1' => 'required|file|image',
             'hinhanh2' => 'required|file|image',
             'hinhanh3' => 'nullable|file|image',
             'ghichu' => 'nullable',
@@ -186,6 +187,7 @@ class CaNhanLivewire extends Component
         $this->resetValidation();
         $this->reset();
         $this->mount();
+        $this->dispatchBrowserEvent('unblockUI');
         $this->dispatchBrowserEvent('hide_modal');
     }
 
@@ -206,6 +208,8 @@ class CaNhanLivewire extends Component
         $this->editStatus = false;
         $this->updateMode = false;
         $this->add_diemdan_step = 2;
+
+        $this->dispatchBrowserEvent('unblockUI');
 
         $this->dispatchBrowserEvent('show_modal', "#add_edit_modal");
     }
@@ -258,13 +262,14 @@ class CaNhanLivewire extends Component
     public function save_diemdan()
     {
         if ($this->bfo_info->cannot("add-poster")) {
+            $this->dispatchBrowserEvent('unblockUI');
             $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
             return null;
         }
 
+        $this->dispatchBrowserEvent('unblockUI');
         $this->validate();
-
-        dd($this->hinhanh1);
+        $this->dispatchBrowserEvent('blockUI');
     }
 
 }
