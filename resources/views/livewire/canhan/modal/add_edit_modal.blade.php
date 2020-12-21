@@ -341,9 +341,9 @@
 
 
                             <div class="col-12">
-                                <div class="form-group mb-1">
+                                <div class="form-group mb-1 px-2">
                                     <div>
-                                        <input type="file" accept="image/*" class="form-control px-2" id="hinhanh1" wire:model="hinhanh1" style="width: 100%">
+                                        <input type="file" multiple accept="image/*" class="form-control" id="hinhanh1" wire:model="hinhanh1" style="width: 100%;overflow: hidden;">
                                     </div>
                                     @error('hinhanh1')
                                         <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
@@ -352,9 +352,9 @@
                             </div>
 
                             <div class="col-12">
-                                <div class="form-group mb-1">
+                                <div class="form-group mb-1 px-2">
                                     <div>
-                                        <input type="file" accept="image/*" class="form-control px-2" wire:model="hinhanh2" style="width: 100%">
+                                        <input type="file" accept="image/*" class="form-control" wire:model="hinhanh2" style="width: 100%;overflow: hidden;">
                                     </div>
                                     @error('hinhanh2')
                                         <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
@@ -363,9 +363,9 @@
                             </div>
 
                             <div class="col-12">
-                                <div class="form-group">
+                                <div class="form-group px-2">
                                     <div>
-                                        <input type="file" accept="image/*" class="form-control px-2" wire:model="hinhanh3" style="width: 100%">
+                                        <input type="file" accept="image/*" class="form-control" wire:model="hinhanh3" style="width: 100%;overflow: hidden;">
                                     </div>
                                     @error('hinhanh3')
                                         <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
@@ -387,7 +387,6 @@
 
                         </div>
 
-
                     </form>
                 </div>
             </div>
@@ -400,7 +399,7 @@
 
                 @if ($add_diemdan_step == 2)
                     <button wire:loading.attr="disabled" wire:click.prevent="back_step(1)" class="btn btn-danger"><span class="fas fa-backward mr-2"></span>Quay lại</button>
-                    <button wire:loading.attr="disabled" wire:click.prevent="save_diemdan()" class="btn btn-success" totaa-block-ui>Xác nhận<span class="fas fa-fast-forward ml-2"></span></button>
+                    <button wire:loading.attr="disabled" class="btn btn-success" totaa-wire:click.prevent="save_diemdan">Xác nhận<span class="fas fa-fast-forward ml-2"></span></button>
                 @endif
 
             </div>
