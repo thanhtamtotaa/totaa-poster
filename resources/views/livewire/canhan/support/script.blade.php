@@ -7,6 +7,16 @@
         $(".modal.fade").modal("hide");
     })
 
+    //$.blockUI();
+    window.addEventListener('blockUI', function(e) {
+        ToTaa_BlockUI();
+    })
+
+    //$.unblockUI();
+    window.addEventListener('unblockUI', function(e) {
+        $.unblockUI();
+    })
+
     //Hiện modal cụ thể
     window.addEventListener('show_modal', event => {
         $(event.detail).modal("show");
@@ -30,6 +40,11 @@
     //Gọi view edit role
     $(document).on("click", "[totaa-block-ui]", function() {
         ToTaa_BlockUI();
+    });
+
+    //Submit
+    $(document).on("click", "[totaa-submit]", function() {
+        file_upload($(this).attr("totaa-submit"), @this);
     });
 
     //Block UI khi ấn thêm mới
@@ -57,8 +72,11 @@
 
     //Xử lý khi dữ liệu đã được load xong
     document.addEventListener("DOMContentLoaded", () => {
-        Livewire.hook("message.processed", (message, component) => {
+        Livewire.hook("message.failed", (message, component) => {
             $.unblockUI();
+        });
+
+        Livewire.hook("message.processed", (message, component) => {
 
             if ($("select.select2-totaa").length != 0) {
                 $("select.select2-totaa").each(function(e) {
@@ -84,16 +102,71 @@
     }
 
     window.addEventListener('livewire-upload-start', event => {
-        console.log(event);
+        let fime_names = [];
+        for (let i = 0; i < $(event.target.files).length; i++) {
+            fime_names.push(event.target.files[i].name);
+        }
+
+        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
+            $("div#TT_blockUI_custom").append(
+                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-info" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
+                    fime_names +
+                    "</div>"
+            );
+        } else {
+            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success progress-bar-animated").addClass("bg-info").css("width", "100%");
+        }
     })
+
     window.addEventListener('livewire-upload-finish', event => {
-        console.log(event);
+        let fime_names = [];
+        for (let i = 0; i < $(event.target.files).length; i++) {
+            fime_names.push(event.target.files[i].name);
+        }
+
+        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
+            $("div#TT_blockUI_custom").append(
+                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-success" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
+                    fime_names +
+                    "</div>"
+            );
+        } else {
+            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success progress-bar-animated").addClass("bg-success").css("width", "100%");
+        }
     })
+
     window.addEventListener('livewire-upload-error', event => {
-        console.log(event);
+        let fime_names = [];
+        for (let i = 0; i < $(event.target.files).length; i++) {
+            fime_names.push(event.target.files[i].name);
+        }
+
+        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
+            $("div#TT_blockUI_custom").append(
+                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-danger" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
+                    fime_names +
+                    "</div>"
+            );
+        } else {
+            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success progress-bar-animated").addClass("bg-danger").css("width", "100%");
+        }
     })
+
     window.addEventListener('livewire-upload-progress', event => {
-        console.log(event);
+        let fime_names = [];
+        for (let i = 0; i < $(event.target.files).length; i++) {
+            fime_names.push(event.target.files[i].name);
+        }
+
+        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
+            $("div#TT_blockUI_custom").append(
+                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-warning" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
+                    fime_names +
+                    "</div>"
+            );
+        } else {
+            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success").addClass("bg-warning progress-bar-animated").css("width", event.detail.progress + "%");
+        }
     })
 
 </script>
