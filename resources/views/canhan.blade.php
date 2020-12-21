@@ -11,6 +11,7 @@
     <script src="{{ mix('/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ mix('/vendor/libs/datatables/datatables.js') }}"></script>
     <script src="{{ mix('/vendor/libs/select2/select2.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 @endsection
 
 @push('datatables')
