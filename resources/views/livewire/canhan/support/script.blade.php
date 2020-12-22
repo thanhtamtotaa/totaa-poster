@@ -43,8 +43,10 @@
     });
 
     //Submit
-    $(document).on("click", "[totaa-submit]", function() {
-        file_upload($(this).attr("totaa-submit"), @this);
+    $(document).on("click", '[totaa-click-prevent]', function(event) {
+        event.preventDefault();
+        file_upload($(this).attr("totaa-click-prevent"));
+
     });
 
     //Block UI khi ấn thêm mới
@@ -101,72 +103,5 @@
         });
     }
 
-    window.addEventListener('livewire-upload-start', event => {
-        let fime_names = [];
-        for (let i = 0; i < $(event.target.files).length; i++) {
-            fime_names.push(event.target.files[i].name);
-        }
-
-        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
-            $("div#TT_blockUI_custom").append(
-                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-info" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
-                    fime_names +
-                    "</div>"
-            );
-        } else {
-            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success progress-bar-animated").addClass("bg-info").css("width", "100%");
-        }
-    })
-
-    window.addEventListener('livewire-upload-finish', event => {
-        let fime_names = [];
-        for (let i = 0; i < $(event.target.files).length; i++) {
-            fime_names.push(event.target.files[i].name);
-        }
-
-        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
-            $("div#TT_blockUI_custom").append(
-                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-success" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
-                    fime_names +
-                    "</div>"
-            );
-        } else {
-            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success progress-bar-animated").addClass("bg-success").css("width", "100%");
-        }
-    })
-
-    window.addEventListener('livewire-upload-error', event => {
-        let fime_names = [];
-        for (let i = 0; i < $(event.target.files).length; i++) {
-            fime_names.push(event.target.files[i].name);
-        }
-
-        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
-            $("div#TT_blockUI_custom").append(
-                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-danger" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
-                    fime_names +
-                    "</div>"
-            );
-        } else {
-            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success progress-bar-animated").addClass("bg-danger").css("width", "100%");
-        }
-    })
-
-    window.addEventListener('livewire-upload-progress', event => {
-        let fime_names = [];
-        for (let i = 0; i < $(event.target.files).length; i++) {
-            fime_names.push(event.target.files[i].name);
-        }
-
-        if ($("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).length == 0) {
-            $("div#TT_blockUI_custom").append(
-                '<div class="progress"><div class="progress-bar ' + $(event.target).attr("wire:model") + ' progress-bar-striped bg-warning" style="width: 100%;"></div></div><div class="mx-3 mb-2 mt-1 text-left text-tiny">' +
-                    fime_names +
-                    "</div>"
-            );
-        } else {
-            $("div#TT_blockUI_custom").find("div.progress-bar." + $(event.target).attr("wire:model")).removeClass("bg-info bg-warning bg-danger bg-success").addClass("bg-warning progress-bar-animated").css("width", event.detail.progress + "%");
-        }
-    })
 
 </script>
