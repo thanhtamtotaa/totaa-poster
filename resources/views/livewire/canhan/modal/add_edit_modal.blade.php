@@ -399,7 +399,7 @@
 
                 @if ($add_diemdan_step == 2)
                     <button wire:loading.attr="disabled" wire:click.prevent="back_step(1)" class="btn btn-danger"><span class="fas fa-backward mr-2"></span>Quay lại</button>
-                    <button wire:loading.attr="disabled" class="btn btn-success" totaa-wire:click.prevent="save_diemdan">Xác nhận<span class="fas fa-fast-forward ml-2"></span></button>
+                    <button wire:loading.attr="disabled" wire:click.prevent="TotaaFileUploadSubmit('save_diemdan')" totaa-file-upload-blockui class="btn btn-success">Xác nhận<span class="fas fa-fast-forward ml-2"></span></button>
                 @endif
 
             </div>
