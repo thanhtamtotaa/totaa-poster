@@ -43,7 +43,7 @@ class CaNhanLivewire extends Component
      *
      * @var array
      */
-    protected $listeners = ['add_diemdan', 'save_diemdan', ];
+    protected $listeners = ['add_diemdan', 'save_diemdan', 'Update_TotaaFileUploadStep', 'TotaaFileUploadSubmit', ];
 
         /**
      * Validation rules
@@ -261,6 +261,8 @@ class CaNhanLivewire extends Component
      */
     public function save_diemdan()
     {
+        $this->dispatchBrowserEvent('removeEventListener');
+
         if ($this->bfo_info->cannot("add-poster")) {
             $this->dispatchBrowserEvent('unblockUI');
             $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
