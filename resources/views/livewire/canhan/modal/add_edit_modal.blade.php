@@ -343,7 +343,7 @@
                             <div class="col-12">
                                 <div class="form-group mb-1 px-2">
                                     <div>
-                                        <input type="file" multiple accept="image/*" class="form-control" id="hinhanh1" wire:model="hinhanh1" style="width: 100%;overflow: hidden;">
+                                        <input type="file" accept="image/*" class="form-control" id="hinhanh1" wire:model="hinhanh1" style="width: 100%;overflow: hidden;">
                                     </div>
                                     @error('hinhanh1')
                                         <label class="pl-1 small invalid-feedback d-inline-block" ><i class="fas mr-1 fa-exclamation-circle"></i>{{ $message }}</label>
