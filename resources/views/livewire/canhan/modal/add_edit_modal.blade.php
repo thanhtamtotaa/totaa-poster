@@ -10,6 +10,7 @@
                 </button>
             </div>
 
+            @if (!$updateMode)
             <div class="modal-body">
                 <div class="container-fluid mx-0 px-0">
                     <form class="sw-main sw-theme-default">
@@ -390,6 +391,7 @@
                     </form>
                 </div>
             </div>
+            @endif
 
             <div class="modal-footer mx-auto">
                 @if ($add_diemdan_step == 1)
