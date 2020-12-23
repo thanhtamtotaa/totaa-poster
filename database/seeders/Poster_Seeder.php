@@ -7,6 +7,7 @@ use Totaa\TotaaPoster\Models\Poster\Poster_Name;
 use Totaa\TotaaPoster\Models\Poster\Poster_BeMat;
 use Totaa\TotaaPoster\Models\Poster\Poster_HinhThuc;
 use Totaa\TotaaPoster\Models\Poster\Poster_MucThuong;
+use Totaa\TotaaPoster\Models\Poster\Poster_TrangThai;
 use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai;
 
 class Poster_Seeder extends Seeder
@@ -114,6 +115,63 @@ class Poster_Seeder extends Seeder
         Poster_MucThuong::updateOrCreate(
             ['id' => 9],
             ['mucthuong' => "0 đồng", 'active' => true]
+        );
+
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 1],
+            ['status' => "Đã hủy", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 3],
+            ['status' => "Không được duyệt", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 5],
+            ['status' => "Mới tạo", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 7],
+            ['status' => "Mới thêm Poster", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 9],
+            ['status' => "Đã duyệt", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 11],
+            ['status' => "Sai số điện thoại", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 13],
+            ['status' => "Không liên lạc được", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 15],
+            ['status' => "Yêu cầu gọi lại", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 17],
+            ['status' => "Từ chối dán", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 19],
+            ['status' => "Đồng ý dán", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 21],
+            ['status' => "Đã in hợp đồng", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 23],
+            ['status' => "Từ chối ký hợp đồng", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 25],
+            ['status' => "Đã dán", 'active' => true]
+        );
+        Poster_TrangThai::updateOrCreate(
+            ['id' => 27],
+            ['status' => "Đã lên hệ thống", 'active' => true]
         );
     }
 }
