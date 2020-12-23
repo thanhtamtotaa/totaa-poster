@@ -3,19 +3,24 @@
 namespace Totaa\TotaaPoster\Http\Livewire;
 
 use Auth;
+use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Totaa\TotaaTeam\Models\Team;
 use Illuminate\Support\Facades\Cache;
 use Totaa\TotaaDonvi\Models\TotaaTinh;
 use Totaa\TotaaDonvi\Models\TotaaHuyen;
+use Illuminate\Support\Facades\Validator;
+use Totaa\TotaaPoster\Models\Poster\Poster_List;
 use Totaa\TotaaPoster\Models\Poster\Poster_Name;
 use Totaa\TotaaPoster\Models\Poster\Poster_BeMat;
+use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_List;
+use Totaa\TotaaPoster\Models\Poster\Poster_ChiTiet;
 use Totaa\TotaaPoster\Models\Poster\Poster_HinhThuc;
 use Totaa\TotaaPoster\Models\Poster\Poster_MucThuong;
 use Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai;
-use Livewire\WithFileUploads;
 use Totaa\TotaaFileUpload\Traits\TotaaFileUploadTraits;
-use Illuminate\Support\Facades\Validator;
+use Totaa\TotaaPoster\Models\Poster\Poster_ChiTiet_HinhAnh;
 
 class CaNhanLivewire extends Component
 {
@@ -28,7 +33,8 @@ class CaNhanLivewire extends Component
     * @var mixed
     */
    public $diadiem_id, $team_id, $belongto_mnv, $loaidiadiem_id, $tendiadiem, $chudiadiem, $phone, $tinh_id, $huyen_id, $xa_id, $diachi, $thongtinkhac, $poster_name_id, $poster_hinhthuc_id, $poster_bemat_id, $ngang, $doc, $vitridan, $mucthuong_id, $hinhanh1, $hinhanh2, $hinhanh3, $ghichu;
-   public $bfo_info, $modal_title, $toastr_message, $add_diemdan_step, $team_arrays = [], $tdv_arrays = [], $diadiem_phanloai_arrays = [], $tinh_arrays = [], $huyen_arrays = [], $xa_arrays = [], $poster_name_arrays = [], $poster_hinhthuc_arrays = [], $poster_bemat_arrays =[], $poster_mucthuong_arrays = [];
+   public $bfo_info, $modal_title, $toastr_message, $add_diemdan_step, $team_arrays = [], $tdv_arrays = [], $diadiem_phanloai_arrays = [], $tinh_arrays = [], $huyen_arrays = [], $xa_arrays = [], $poster_name_arrays = [], $poster_hinhthuc_arrays = [], $poster_bemat_arrays =[], $poster_mucthuong_arrays = [], $hinhanh_arrays = [];
+   public $diadiem, $poster, $poster_chitiet;
 
     /**
      * Cho phép cập nhật updateMode
@@ -76,7 +82,7 @@ class CaNhanLivewire extends Component
             'doc' => 'required|numeric|integer',
             'vitridan' => 'required',
             'mucthuong_id' => 'required|exists:poster_mucthuongs,id',
-            //'hinhanh1' => 'required|file|image',
+            'hinhanh1' => 'required|file|image',
             'hinhanh2' => 'required|file|image',
             'hinhanh3' => 'nullable|file|image',
             'ghichu' => 'nullable',
@@ -207,7 +213,7 @@ class CaNhanLivewire extends Component
         $this->toastr_message = "Thêm điểm dán thành công";
         $this->editStatus = false;
         $this->updateMode = false;
-        $this->add_diemdan_step = 2;
+        $this->add_diemdan_step = 1;
 
         $this->dispatchBrowserEvent('unblockUI');
 
@@ -221,7 +227,7 @@ class CaNhanLivewire extends Component
      */
     public function next_step($step)
     {
-        if (Auth::user()->bfo_info->hasAnyRole("khaosat-poster")) {
+        if ($this->bfo_info->hasAnyRole("khaosat-poster")) {
             $custom_rule = "required";
         } else {
             $custom_rule = "nullable";
@@ -255,14 +261,12 @@ class CaNhanLivewire extends Component
     }
 
     /**
-     * back_step method
+     * save_diemdan method
      *
      * @return void
      */
     public function save_diemdan()
     {
-        $this->dispatchBrowserEvent('removeEventListener');
-
         if ($this->bfo_info->cannot("add-poster")) {
             $this->dispatchBrowserEvent('unblockUI');
             $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
@@ -272,6 +276,109 @@ class CaNhanLivewire extends Component
         $this->dispatchBrowserEvent('unblockUI');
         $this->validate();
         $this->dispatchBrowserEvent('blockUI');
+
+        //Upload ảnh vào thư viện
+        $tt_timestamp = Carbon::now()->timestamp;
+        $path = "Truyền thông/Khảo sát Poster/Poster ".Poster_Name::find($this->poster_name_id)->name."/".TotaaTinh::find($this->tinh_id)->name;
+        $this->hinhanh_arrays = [];
+        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh1, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_1.".$this->hinhanh1->getClientOriginalExtension());
+        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh2, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_2.".$this->hinhanh2->getClientOriginalExtension());
+        if (!!$this->hinhanh3) {
+            $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh3, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_3.".$this->hinhanh3->getClientOriginalExtension());
+        }
+
+        try {
+            //Check và tạo địa điểm
+            $this->diadiem = DiaDiem_List::updateOrCreate(
+                [
+                    'phone' => $this->phone,
+                    'loaidiadiem_id' => $this->loaidiadiem_id,
+                    'xa_id' => $this->xa_id,
+                ],
+                [
+                    'tendiadiem' => $this->tendiadiem,
+                    'chudiadiem' => $this->chudiadiem,
+                    'diachi' => $this->diachi,
+                    'thongtinkhac' => $this->thongtinkhac,
+                    'belongto_mnv' => !!$this->belongto_mnv ? $this->belongto_mnv : $this->bfo_info->mnv,
+                    'created_by_mnv' => $this->bfo_info->mnv,
+                    'active' => true
+                ]
+            );
+
+            //Check và tạo Poster
+            $this->poster = $this->diadiem->posters()->where("poster_name_id", $this->poster_name_id)->first();
+
+            //Nếu như điểm dán đã được duyệt thì không thể thêm poster loại này vào nữa
+            if (!!$this->poster) {
+                $this->dispatchBrowserEvent('unblockUI');
+                $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Đã tồn tại Poster ".Poster_Name::find($this->poster_name_id)->name." tại địa điểm ".$this->tendiadiem." vui lòng sử dụng chức năng thêm Poster"]);
+                return null;
+            }
+
+            $this->poster = Poster_List::updateOrCreate(
+                [
+                    'diadiem_id' => $this->diadiem->id,
+                    'poster_name_id' => $this->poster_name_id,
+                ],
+                [
+                    'mucthuong_id' => $this->mucthuong_id,
+                    'trangthai_id' => 5,
+                    'belongto_mnv' => !!$this->belongto_mnv ? $this->belongto_mnv : $this->bfo_info->mnv,
+                    'created_by_mnv' => $this->bfo_info->mnv,
+                    'active' => true
+                ]
+            );
+
+            if (!!!$this->poster->poster_code) {
+                $this->poster->update([
+                    'poster_code' => Poster_Name::find($this->poster_name_id)->name[0].sprintf("%06d",$this->poster->id),
+                ]);
+            }
+
+            //Tạo chi tiết poster
+            $this->poster_chitiet = Poster_ChiTiet::create(
+                [
+                    'poster_id' => $this->poster->id,
+                    'poster_hinhthuc_id' => $this->poster_hinhthuc_id,
+                    'poster_bemat_id' => $this->poster_bemat_id,
+                    'ngang' => $this->ngang,
+                    'doc' => $this->doc,
+                    'vitridan' => $this->vitridan,
+                    'ghichu' => $this->ghichu,
+                    'belongto_mnv' => !!$this->belongto_mnv ? $this->belongto_mnv : $this->bfo_info->mnv,
+                    'created_by_mnv' => $this->bfo_info->mnv,
+                    'active' => true
+                ]
+            );
+
+            //Gắn hình ảnh khảo sát vào Poster
+            foreach ($this->hinhanh_arrays as $key => $value) {
+                Poster_ChiTiet_HinhAnh::create(
+                    [
+                        'poster_chitiet_id' => $this->poster_chitiet->id,
+                        'totaa_file_id' => $value,
+                        'belongto_mnv' => !!$this->belongto_mnv ? $this->belongto_mnv : $this->bfo_info->mnv,
+                        'created_by_mnv' => $this->bfo_info->mnv,
+                        'active' => true
+                    ]
+                );
+            }
+        } catch (\Illuminate\Database\QueryException $e) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => implode(" - ", $e->errorInfo)]);
+            return null;
+        } catch (\Exception $e2) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => $e2->getMessage()]);
+            return null;
+        }
+
+        //Đầy thông tin về trình duyệt
+        $this->dispatchBrowserEvent('dt_draw');
+        $toastr_message = $this->toastr_message;
+        $this->cancel();
+        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => $toastr_message]);
     }
 
 }
