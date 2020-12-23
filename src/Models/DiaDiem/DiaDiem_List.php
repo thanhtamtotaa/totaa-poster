@@ -33,6 +33,12 @@ class DiaDiem_List extends Model
         return $this->belongsTo('Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai', 'loaidiadiem_id', 'id');
     }
 
+    //Một điểm dán có thể có nhiều poster
+    public function posters()
+    {
+        return $this->hasMany('Totaa\TotaaPoster\Models\Poster\Poster_List', 'diadiem_id', 'id');
+    }
+
     /**
      * Mỗi địa điểm nằm ở một xã nào đó
      *
