@@ -81,10 +81,10 @@
         ToTaa_BlockUI();
     });
 
-    //Gọi view edit role
-    $(document).on("click", "[totaa-edit-role]", function() {
+    //Gọi view xem chi tiết poster
+    $(document).on("click", "[totaa-view-poster]", function() {
         ToTaa_BlockUI();
-        Livewire.emit('edit_role', $(this).attr("totaa-edit-role"));
+        Livewire.emit('view_poster', $(this).attr("totaa-view-poster"));
     });
 
     //Gọi view thêm Poster
@@ -130,5 +130,36 @@
         });
     }
 
+//blueimp-carousel-poster
+function BlueimpCarousel() {
+    $("[totaa-id='blueimp-carousel']").each(function(e) {
+        var blue_data = [];
+
+        $(this)
+            .find("[totaa-blueimp-carousel]")
+            .each(function(e) {
+                blue_data.push({
+                    type: $(this).attr("mine-type"),
+                    href: $(this).attr("href"),
+                    thumbnail: $(this).attr("thumbnail"),
+                    poster: $(this).attr("thumbnail")
+                });
+            });
+
+        window.blueimpGallery(blue_data, {
+            container: this,
+            carousel: true
+        });
+    });
+}
+
+
+$('.modal.fade').on('shown.bs.modal', function () {
+    if ($("[totaa-id='blueimp-carousel']").length != 0) {
+        setTimeout(function() {
+            BlueimpCarousel();
+        }, 150);
+    }
+})
 
 </script>
