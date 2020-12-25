@@ -66,5 +66,7 @@ class Poster_Role_Permission_Seeder extends Seeder
         $super_admin->givePermissionTo($permission);
         $admin->givePermissionTo($permission);
         $admin_poster->givePermissionTo($permission);
+        $khaosat_poster->givePermissionTo(["view-poster", "add-poster", "edit-poster", "delete-poster"]);
+
     }
 }
