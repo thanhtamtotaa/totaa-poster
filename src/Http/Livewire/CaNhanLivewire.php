@@ -35,7 +35,7 @@ class CaNhanLivewire extends Component
     */
    public $diadiem_id, $team_id, $belongto_mnv, $loaidiadiem_id, $tendiadiem, $chudiadiem, $phone, $tinh_id, $huyen_id, $xa_id, $diachi, $thongtinkhac, $poster_name_id, $poster_hinhthuc_id, $poster_bemat_id, $ngang, $doc, $vitridan, $mucthuong_id, $hinhanh1, $hinhanh2, $hinhanh3, $ghichu, $poster_id;
    public $bfo_info, $modal_title, $toastr_message, $add_diemdan_step, $team_arrays = [], $tdv_arrays = [], $diadiem_phanloai_arrays = [], $tinh_arrays = [], $huyen_arrays = [], $xa_arrays = [], $poster_name_arrays = [], $poster_hinhthuc_arrays = [], $poster_bemat_arrays =[], $poster_mucthuong_arrays = [], $hinhanh_arrays = [];
-   public $diadiem, $poster, $poster_chitiet;
+   public $diadiem, $poster, $poster_chitiet, $poster_chitiets;
 
     /**
      * Cho phép cập nhật updateMode
@@ -50,7 +50,7 @@ class CaNhanLivewire extends Component
      *
      * @var array
      */
-    protected $listeners = ['add_diemdan', 'save_diemdan', 'Update_TotaaFileUploadStep', 'TotaaFileUploadSubmit', 'delete_poster_confirm', 'add_poster_modal', 'add_poster', ];
+    protected $listeners = ['add_diemdan', 'save_diemdan', 'Update_TotaaFileUploadStep', 'TotaaFileUploadSubmit', 'delete_poster_confirm', 'add_poster_modal', 'add_poster', 'view_poster', ];
 
         /**
      * Validation rules
@@ -460,7 +460,7 @@ class CaNhanLivewire extends Component
      */
     public function add_poster_modal($id)
     {
-        dd(app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName());
+        //dd(app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName());
         if ($this->bfo_info->cannot("add-poster")) {
             $this->cancel();
             $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
@@ -533,10 +533,10 @@ class CaNhanLivewire extends Component
         $tt_timestamp = Carbon::now()->timestamp;
         $path = "Truyền thông/Khảo sát Poster/Poster ".Poster_Name::find($this->poster->poster_name_id)->name."/".TotaaXa::find($this->diadiem->xa_id)->huyen->tinh->name;
         $this->hinhanh_arrays = [];
-        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh1, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_1.".$this->hinhanh1->getClientOriginalExtension());
-        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh2, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_2.".$this->hinhanh2->getClientOriginalExtension());
+        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh1, $path, $this->bfo_info->mnv."_".$this->diadiem->xa_id."_".$tt_timestamp."_1.".$this->hinhanh1->getClientOriginalExtension());
+        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh2, $path, $this->bfo_info->mnv."_".$this->diadiem->xa_id."_".$tt_timestamp."_2.".$this->hinhanh2->getClientOriginalExtension());
         if (!!$this->hinhanh3) {
-            $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh3, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_3.".$this->hinhanh3->getClientOriginalExtension());
+            $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh3, $path, $this->bfo_info->mnv."_".$this->diadiem->xa_id."_".$tt_timestamp."_3.".$this->hinhanh3->getClientOriginalExtension());
         }
 
         try {
@@ -583,5 +583,28 @@ class CaNhanLivewire extends Component
         $toastr_message = $this->toastr_message;
         $this->cancel();
         $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => $toastr_message]);
+    }
+
+    /**
+     * Hiện thị cửa sổ xem chi tiết poster
+     *
+     * @return void
+     */
+    public function view_poster($id)
+    {
+        if ($this->bfo_info->cannot("view-poster")) {
+            $this->cancel();
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        $this->poster_id = $id;
+        $this->poster = Poster_List::find($this->poster_id);
+
+        $this->diadiem = $this->poster->diadiem;
+        $this->poster_chitiets = $this->poster->poster_chitiets;
+
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->dispatchBrowserEvent('show_modal', "#view_poster_modal");
     }
 }
