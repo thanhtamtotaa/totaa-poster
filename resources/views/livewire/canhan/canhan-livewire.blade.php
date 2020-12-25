@@ -6,6 +6,7 @@
     @include('totaa-poster::livewire.canhan.modal.add_edit_modal')
     @include('totaa-poster::livewire.canhan.modal.delete_modal')
     @include('totaa-poster::livewire.canhan.modal.add_poster_modal')
+    @include('totaa-poster::livewire.canhan.modal.view_poster_modal')
 
     <!-- Scripts -->
     @push('livewires')
