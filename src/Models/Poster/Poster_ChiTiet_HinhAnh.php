@@ -23,4 +23,13 @@ class Poster_ChiTiet_HinhAnh extends Model
     // Disable Laravel's mass assignment protection
     protected $guarded = ['id'];
 
+    /**
+     * Mỗi  hình ảnh đều được lưu trong thư viện
+     *
+     * @return void
+     */
+    public function anh()
+    {
+        return $this->hasOne('Totaa\TotaaFileUpload\Models\FileUpload', 'id', 'totaa_file_id');
+    }
 }
