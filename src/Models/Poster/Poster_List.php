@@ -58,4 +58,10 @@ class Poster_List extends Model
     {
         return $this->belongsTo('Totaa\TotaaBfo\Models\BfoInfo', 'created_by_mnv', 'mnv');
     }
+
+    //Một điểm có thể dán nhiều poster
+    public function poster_chitiets()
+    {
+        return $this->hasMany('Totaa\TotaaPoster\Models\Poster\Poster_ChiTiet', 'poster_id', 'id');
+    }
 }
