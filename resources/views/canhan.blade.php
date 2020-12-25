@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="{{ mix('/vendor/libs/datatables/datatables.css') }}">
     <link rel="stylesheet" href="{{ mix('/vendor/libs/smartwizard/smartwizard.css') }}">
     <link rel="stylesheet" href="{{ mix('/vendor/libs/select2/select2.css') }}">
+    <link rel="stylesheet" href="{{ mix('/vendor/libs/blueimp-gallery/gallery.css') }}">
+    <link rel="stylesheet" href="{{ mix('/vendor/libs/blueimp-gallery/gallery-indicator.css') }}">
+    <link rel="stylesheet" href="{{ mix('/vendor/libs/blueimp-gallery/gallery-video.css') }}">
 @endsection
 
 @section('scripts')
@@ -11,7 +14,12 @@
     <script src="{{ mix('/vendor/libs/moment/moment.js') }}"></script>
     <script src="{{ mix('/vendor/libs/datatables/datatables.js') }}"></script>
     <script src="{{ mix('/vendor/libs/select2/select2.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script src="{{ mix('/vendor/libs/blueimp-gallery/gallery.js') }}"></script>
+    <script src="{{ mix('/vendor/libs/blueimp-gallery/gallery-fullscreen.js') }}"></script>
+    <script src="{{ mix('/vendor/libs/blueimp-gallery/gallery-indicator.js') }}"></script>
+    <script src="{{ mix('/vendor/libs/blueimp-gallery/gallery-video.js') }}"></script>
+    <script src="{{ mix('/vendor/libs/blueimp-gallery/gallery-vimeo.js') }}"></script>
+    <script src="{{ mix('/vendor/libs/blueimp-gallery/gallery-youtube.js') }}"></script>
 @endsection
 
 @push('datatables')
