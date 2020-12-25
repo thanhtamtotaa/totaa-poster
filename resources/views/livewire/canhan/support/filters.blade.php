@@ -1,4 +1,10 @@
 <!-- Filters -->
+@php
+    $tt_diadiem_phanloais = Totaa\TotaaPoster\Models\DiaDiem\DiaDiem_PhanLoai::where("active", true)->select("id", "name")->get();
+    $tt_poster_mucthuongs = Totaa\TotaaPoster\Models\Poster\Poster_MucThuong::where("active", true)->select("id", "mucthuong")->get();
+    $tt_poster_trangthais = Totaa\TotaaPoster\Models\Poster\Poster_TrangThai::where("active", true)->select("id", "status")->get();
+@endphp
+
 <div class="px-4 pt-4 mb-0" wire:ignore>
     <div class="form-row">
 
@@ -12,28 +18,46 @@
         @endif
 
         <div class="col-md mb-4">
-            <label class="form-label" for="mnv_filter">Mã nhân viên</label>
-            <input type="text" id="mnv_filter" class="form-control px-2" placeholder="Lọc theo Mã nhân viên">
-        </div>
-
-        <div class="col-md mb-4">
-            <label class="form-label" for="full_name_filter">Họ và tên</label>
-            <input type="text" id="full_name_filter" class="form-control px-2" placeholder="Lọc theo họ và tên">
-        </div>
-
-
-        <div class="col-md mb-4">
-            <label class="form-label" for="chinhanh_filter">Đơn vị</label>
-            <select class="custom-select" id="chinhanh_filter" style="width: 100%">
-                <option selected></option>
-                <option value="Hội sở Hà Bình Phương">Hội sở Hà Bình Phương</option>
-                <option value="Chi nhánh Hà Nội">Chi nhánh Hà Nội</option>
-                <option value="Chi nhánh Đà Nẵng">Chi nhánh Đà Nẵng</option>
-                <option value="Chi nhánh Hồ Chí Minh">Chi nhánh Hồ Chí Minh</option>
-                <option value="Văn phòng Tây Nguyên">Văn phòng Tây Nguyên</option>
+            <label class="form-label" for="mucthuong_filter">Mức thưởng</label>
+            <select class="custom-select" id="mucthuong_filter" style="width: 100%">
+                @if (count($tt_poster_mucthuongs) == 1)
+                    <option value="{{ $tt_poster_mucthuongs["0"]->id }}">{{ $tt_poster_mucthuongs["0"]->mucthuong }}</option>
+                @else
+                    <option selected></option>
+                    @foreach ($tt_poster_mucthuongs as $tt_poster_mucthuong)
+                        <option value="{{ $tt_poster_mucthuong->id }}">{{ $tt_poster_mucthuong->mucthuong }}</option>
+                    @endforeach
+                @endif
             </select>
         </div>
 
+        <div class="col-md mb-4">
+            <label class="form-label" for="trangthai_filter">Trạng thái</label>
+            <select class="custom-select" id="trangthai_filter" style="width: 100%">
+                @if (count($tt_poster_trangthais) == 1)
+                    <option value="{{ $tt_poster_trangthais["0"]->id }}">{{ $tt_poster_trangthais["0"]->status }}</option>
+                @else
+                    <option selected></option>
+                    @foreach ($tt_poster_trangthais as $tt_poster_trangthai)
+                        <option value="{{ $tt_poster_trangthai->id }}">{{ $tt_poster_trangthai->status }}</option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
+
+        <div class="col-md mb-4">
+            <label class="form-label" for="loadiadiem_filter">Loại địa điểm</label>
+            <select class="custom-select" id="loadiadiem_filter" style="width: 100%">
+                @if (count($tt_diadiem_phanloais) == 1)
+                    <option value="{{ $tt_diadiem_phanloais["0"]->id }}">{{ $tt_diadiem_phanloais["0"]->name }}</option>
+                @else
+                    <option selected></option>
+                    @foreach ($tt_diadiem_phanloais as $tt_diadiem_phanloai)
+                        <option value="{{ $tt_diadiem_phanloai->id }}">{{ $tt_diadiem_phanloai->name }}</option>
+                    @endforeach
+                @endif
+            </select>
+        </div>
 
         <div class="col-md col-xl-2 mb-4 pl-md-2">
             <div class="row p-0 m-0 mw-150">
