@@ -10,6 +10,7 @@ use Totaa\TotaaTeam\Models\Team;
 use Illuminate\Support\Facades\Cache;
 use Totaa\TotaaDonvi\Models\TotaaTinh;
 use Totaa\TotaaDonvi\Models\TotaaHuyen;
+use Totaa\TotaaDonvi\Models\TotaaXa;
 use Illuminate\Support\Facades\Validator;
 use Totaa\TotaaPoster\Models\Poster\Poster_List;
 use Totaa\TotaaPoster\Models\Poster\Poster_Name;
@@ -32,7 +33,7 @@ class CaNhanLivewire extends Component
     *
     * @var mixed
     */
-   public $diadiem_id, $team_id, $belongto_mnv, $loaidiadiem_id, $tendiadiem, $chudiadiem, $phone, $tinh_id, $huyen_id, $xa_id, $diachi, $thongtinkhac, $poster_name_id, $poster_hinhthuc_id, $poster_bemat_id, $ngang, $doc, $vitridan, $mucthuong_id, $hinhanh1, $hinhanh2, $hinhanh3, $ghichu;
+   public $diadiem_id, $team_id, $belongto_mnv, $loaidiadiem_id, $tendiadiem, $chudiadiem, $phone, $tinh_id, $huyen_id, $xa_id, $diachi, $thongtinkhac, $poster_name_id, $poster_hinhthuc_id, $poster_bemat_id, $ngang, $doc, $vitridan, $mucthuong_id, $hinhanh1, $hinhanh2, $hinhanh3, $ghichu, $poster_id;
    public $bfo_info, $modal_title, $toastr_message, $add_diemdan_step, $team_arrays = [], $tdv_arrays = [], $diadiem_phanloai_arrays = [], $tinh_arrays = [], $huyen_arrays = [], $xa_arrays = [], $poster_name_arrays = [], $poster_hinhthuc_arrays = [], $poster_bemat_arrays =[], $poster_mucthuong_arrays = [], $hinhanh_arrays = [];
    public $diadiem, $poster, $poster_chitiet;
 
@@ -49,7 +50,7 @@ class CaNhanLivewire extends Component
      *
      * @var array
      */
-    protected $listeners = ['add_diemdan', 'save_diemdan', 'Update_TotaaFileUploadStep', 'TotaaFileUploadSubmit', ];
+    protected $listeners = ['add_diemdan', 'save_diemdan', 'Update_TotaaFileUploadStep', 'TotaaFileUploadSubmit', 'delete_poster_confirm', 'add_poster_modal', 'add_poster', ];
 
         /**
      * Validation rules
@@ -381,4 +382,206 @@ class CaNhanLivewire extends Component
         $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => $toastr_message]);
     }
 
+    /**
+     * Hiện thị cửa sổ xác nhận xóa
+     *
+     * @return void
+     */
+    public function delete_poster_confirm($id)
+    {
+        if ($this->bfo_info->cannot("delete-poster")) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            $this->cancel();
+            return null;
+        }
+
+        $this->poster_id = $id;
+        $this->poster = Poster_List::find($this->poster_id);
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể xóa"]);
+            $this->cancel();
+            return null;
+        }
+
+        $this->modal_title = "Xóa Poster";
+        $this->toastr_message = "Xóa Poster thành công";
+
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->dispatchBrowserEvent('show_modal', "#delete_modal");
+    }
+
+    /**
+     * Tiến hành xóa thôi
+     *
+     * @return void
+     */
+    public function delete_poster()
+    {
+        if ($this->bfo_info->cannot("delete-poster")) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            $this->cancel();
+            return null;
+        }
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể xóa"]);
+            $this->cancel();
+            return null;
+        }
+
+        try {
+            $this->poster->delete();
+        } catch (\Illuminate\Database\QueryException $e) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => implode(" - ", $e->errorInfo)]);
+            return null;
+        } catch (\Exception $e2) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => $e2->getMessage()]);
+            return null;
+        }
+
+        //Đầy thông tin về trình duyệt
+        $this->dispatchBrowserEvent('dt_draw');
+        $toastr_message = $this->toastr_message;
+        $this->cancel();
+        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => $toastr_message]);
+    }
+
+    /**
+     * Hiện thị cửa sổ thêm poster
+     *
+     * @return void
+     */
+    public function add_poster_modal($id)
+    {
+        dd(app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName());
+        if ($this->bfo_info->cannot("add-poster")) {
+            $this->cancel();
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        $this->poster_id = $id;
+        $this->poster = Poster_List::find($this->poster_id);
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->cancel();
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể thêm"]);
+            return null;
+        }
+
+        $this->diadiem = $this->poster->diadiem;
+
+        $this->modal_title = "Thêm Poster";
+        $this->toastr_message = "Thêm Poster thành công";
+
+        $this->editStatus = true;
+        $this->updateMode = true;
+
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->dispatchBrowserEvent('show_modal', "#add_poster_modal");
+    }
+
+    /**
+     * Tiến hành thêm thôi nào
+     *
+     * @return void
+     */
+    public function add_poster()
+    {
+        if ($this->bfo_info->cannot("add-poster")) {
+            $this->cancel();
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->cancel();
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể thêm"]);
+            return null;
+        }
+
+        if ($this->bfo_info->hasAnyRole("khaosat-poster")) {
+            $custom_rule = "required";
+        } else {
+            $custom_rule = "nullable";
+        }
+
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->validate([
+            'poster_hinhthuc_id' => 'required|exists:poster_hinhthucs,id',
+            'poster_bemat_id' => 'required|exists:poster_bemats,id',
+            'ngang' => 'required|numeric|integer',
+            'doc' => 'required|numeric|integer',
+            'vitridan' => 'required',
+            'hinhanh1' => 'required|file|image',
+            'hinhanh2' => 'required|file|image',
+            'hinhanh3' => 'nullable|file|image',
+            'ghichu' => 'nullable',
+            'team_id' => $custom_rule.'|exists:teams,id',
+            'belongto_mnv' => $custom_rule.'|exists:bfo_infos,mnv',
+        ]);
+        $this->dispatchBrowserEvent('blockUI');
+
+        //Upload ảnh vào thư viện
+        $tt_timestamp = Carbon::now()->timestamp;
+        $path = "Truyền thông/Khảo sát Poster/Poster ".Poster_Name::find($this->poster->poster_name_id)->name."/".TotaaXa::find($this->diadiem->xa_id)->huyen->tinh->name;
+        $this->hinhanh_arrays = [];
+        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh1, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_1.".$this->hinhanh1->getClientOriginalExtension());
+        $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh2, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_2.".$this->hinhanh2->getClientOriginalExtension());
+        if (!!$this->hinhanh3) {
+            $this->hinhanh_arrays[] = $this->save_to_drive($this->hinhanh3, $path, $this->bfo_info->mnv."_".$this->xa_id."_".$tt_timestamp."_3.".$this->hinhanh3->getClientOriginalExtension());
+        }
+
+        try {
+            //Tạo chi tiết poster
+            $this->poster_chitiet = Poster_ChiTiet::create(
+                [
+                    'poster_id' => $this->poster->id,
+                    'poster_hinhthuc_id' => $this->poster_hinhthuc_id,
+                    'poster_bemat_id' => $this->poster_bemat_id,
+                    'ngang' => $this->ngang,
+                    'doc' => $this->doc,
+                    'vitridan' => $this->vitridan,
+                    'ghichu' => $this->ghichu,
+                    'belongto_mnv' => !!$this->belongto_mnv ? $this->belongto_mnv : $this->bfo_info->mnv,
+                    'created_by_mnv' => $this->bfo_info->mnv,
+                    'active' => true
+                ]
+            );
+
+            //Gắn hình ảnh khảo sát vào Poster
+            foreach ($this->hinhanh_arrays as $key => $value) {
+                Poster_ChiTiet_HinhAnh::create(
+                    [
+                        'poster_chitiet_id' => $this->poster_chitiet->id,
+                        'totaa_file_id' => $value,
+                        'belongto_mnv' => !!$this->belongto_mnv ? $this->belongto_mnv : $this->bfo_info->mnv,
+                        'created_by_mnv' => $this->bfo_info->mnv,
+                        'active' => true
+                    ]
+                );
+            }
+        } catch (\Illuminate\Database\QueryException $e) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => implode(" - ", $e->errorInfo)]);
+            return null;
+        } catch (\Exception $e2) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => $e2->getMessage()]);
+            return null;
+        }
+
+        //Đầy thông tin về trình duyệt
+        $this->dispatchBrowserEvent('dt_draw');
+        $toastr_message = $this->toastr_message;
+        $this->cancel();
+        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => $toastr_message]);
+    }
 }
