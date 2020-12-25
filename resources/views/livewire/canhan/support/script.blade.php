@@ -2,6 +2,33 @@
 
     moment.locale("vi");
 
+    //Trạng thái filter
+    $("#trangthai_filter")
+        .wrap('<div class="position-relative"></div>')
+        .select2({
+            placeholder: "Chọn trạng thái",
+            minimumResultsForSearch: 10,
+            allowClear: true
+        });
+
+    //Loại địa điểm filter
+    $("#loadiadiem_filter")
+        .wrap('<div class="position-relative"></div>')
+        .select2({
+            placeholder: "Chọn loại địa điểm",
+            minimumResultsForSearch: 10,
+            allowClear: true
+        });
+
+    //Mức thưởng filter
+    $("#mucthuong_filter")
+        .wrap('<div class="position-relative"></div>')
+        .select2({
+            placeholder: "Chọn mức thưởng",
+            minimumResultsForSearch: 10,
+            allowClear: true
+        });
+
     //Ẩn toàn bộ modal
     window.addEventListener('hide_modal', function(e) {
         $(".modal.fade").modal("hide");
@@ -60,16 +87,16 @@
         Livewire.emit('edit_role', $(this).attr("totaa-edit-role"));
     });
 
-    //Gọi view set-role-permission
-    $(document).on("click", "[totaa-set-role-permission]", function() {
+    //Gọi view thêm Poster
+    $(document).on("click", "[totaa-add-poster]", function() {
         ToTaa_BlockUI();
-        Livewire.emit('set_role_permission', $(this).attr("totaa-set-role-permission"));
+        Livewire.emit('add_poster_modal', $(this).attr("totaa-add-poster"));
     });
 
-    //Gọi view xác nhận xóa
-    $(document).on("click", "[totaa-delete-role]", function() {
+    //Gọi view xác nhận xóa Poster
+    $(document).on("click", "[totaa-delete-poster]", function() {
         ToTaa_BlockUI();
-        Livewire.emit('delete_role', $(this).attr("totaa-delete-role"));
+        Livewire.emit('delete_poster_confirm', $(this).attr("totaa-delete-poster"));
     });
 
     //Xử lý khi dữ liệu đã được load xong
