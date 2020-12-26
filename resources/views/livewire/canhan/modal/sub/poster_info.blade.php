@@ -7,7 +7,7 @@
             <div class="form-group">
                 <h5 class="text-info">
                     Thông tin Poster:
-                    @if (!$editPosterID && $poster->trangthai_id == 5)
+                    @if (!!!$editPosterID && !!!$editDiaDiemID && $poster->trangthai_id == 5)
                         <i wire:click.prevent="edit_poster({{ $poster->id }})" totaa-block-ui wire:loading.attr="disabled" class="ml-2 text-indigo fas fa-edit action-icon px-3"></i>
                     @endif
                 </h5>
