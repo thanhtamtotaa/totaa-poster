@@ -47,6 +47,7 @@ class CaNhanLivewire extends Component
     public $editDiaDiemID = false;
     public $editPosterID = false;
     public $editPosterChiTietID = false;
+    public $deletePosterChiTietID = false;
 
     /**
      * Các biển sự kiện
@@ -780,8 +781,8 @@ class CaNhanLivewire extends Component
             'poster_name_id' => 'required|exists:poster_names,id',
             'mucthuong_id' => 'required|exists:poster_mucthuongs,id',
         ]);
-
         $this->dispatchBrowserEvent('blockUI');
+
         if(!!Poster_List::where("id", "<>",$this->poster->id)->where("poster_name_id", $this->poster_name_id)->where("diadiem_id", $this->poster->diadiem_id)->count()) {
             $this->dispatchBrowserEvent('unblockUI');
             $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Đã tồn tại Poster ".Poster_Name::find($this->poster_name_id)->name." tại địa điểm này"]);
@@ -808,6 +809,98 @@ class CaNhanLivewire extends Component
         //Đầy thông tin về trình duyệt
         $this->dispatchBrowserEvent('dt_draw');
         $this->editPosterID = false;
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => "Chỉnh sửa Poster thành công thành công"]);
+    }
+
+    /**
+     * Chỉnh sửa Thông số Poster
+     *
+     * @return void
+     */
+    public function edit_poster_chitiet($id)
+    {
+        if (!!$id) {
+            if ($this->bfo_info->cannot("edit-poster")) {
+                $this->dispatchBrowserEvent('unblockUI');
+                $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+                return null;
+            }
+
+            if ($this->poster->trangthai_id != 5) {
+                $this->dispatchBrowserEvent('unblockUI');
+                $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể chỉnh sửa"]);
+                return null;
+            }
+
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->editPosterChiTietID = $id;
+            $this->editStatus = true;
+
+            $this->poster_chitiet = Poster_ChiTiet::find($this->editPosterChiTietID);
+
+            $this->poster_hinhthuc_id = $this->poster_chitiet->poster_hinhthuc_id;
+            $this->poster_bemat_id = $this->poster_chitiet->poster_bemat_id;
+            $this->ngang = $this->poster_chitiet->ngang;
+            $this->doc = $this->poster_chitiet->doc;
+            $this->vitridan = $this->poster_chitiet->vitridan;
+            $this->ghichu = $this->poster_chitiet->ghichu;
+
+            $this->dispatchBrowserEvent('select2_update');
+        } else {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->editPosterChiTietID = false;
+        }
+    }
+
+   /**
+     * Chỉnh sửa Thông số Poster
+     *
+     * @return void
+     */
+    public function save_edit_poster_chitiet()
+    {
+        if ($this->bfo_info->cannot("edit-poster")) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể chỉnh sửa"]);
+            return null;
+        }
+
+        $this->dispatchBrowserEvent('unblockUI');
+        $validateData = $this->validate([
+            'poster_hinhthuc_id' => 'required|exists:poster_hinhthucs,id',
+            'poster_bemat_id' => 'required|exists:poster_bemats,id',
+            'ngang' => 'required|numeric|integer',
+            'doc' => 'required|numeric|integer',
+            'vitridan' => 'required',
+            'ghichu' => 'nullable',
+        ]);
+        $this->dispatchBrowserEvent('blockUI');
+
+        try {
+            $idd = $this->poster_chitiet->id;
+            $this->poster_chitiet->update($validateData);
+            $this->poster_chitiet = Poster_ChiTiet::find($idd);
+            $this->poster_chitiets = $this->poster_chitiet->poster->poster_chitiets;
+        } catch (\Illuminate\Database\QueryException $e) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => implode(" - ", $e->errorInfo)]);
+            return null;
+        } catch (\Exception $e2) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => $e2->getMessage()]);
+            return null;
+        }
+
+        //Đầy thông tin về trình duyệt
+        $this->dispatchBrowserEvent('dt_draw');
+        $this->editPosterChiTietID = false;
         $this->dispatchBrowserEvent('unblockUI');
         $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => "Chỉnh sửa Poster thành công thành công"]);
     }
