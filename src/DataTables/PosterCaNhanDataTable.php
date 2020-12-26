@@ -115,7 +115,8 @@ class PosterCaNhanDataTable extends DataTable
                     ])
                     ->dom("<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'row'<'col-sm-12 table-responsive't>><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>><'d-none'B>")
                     ->buttons(
-                        Button::make('excel')->addClass("btn btn-success btn-block waves-effect")->text('<span class="fas fa-file-excel mx-2"></span>')->title('Dữ liệu Poster Cá nhân ' . date('YmdHis')),
+                        //Button::make('excel')->addClass("btn btn-success btn-block waves-effect")->text('<span class="fas fa-file-excel mx-2"></span>')->title('Dữ liệu Poster Cá nhân ' . date('YmdHis')),
+                        Button::make('excel')->addClass("btn btn-success btn-block waves-effect")->text('<span class="fas fa-file-excel mx-2"></span>'),
                     )
                     ->parameters([
                         "autoWidth" => false,
