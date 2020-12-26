@@ -695,6 +695,12 @@ class CaNhanLivewire extends Component
         ]);
         $this->dispatchBrowserEvent('blockUI');
 
+        if(!!DiaDiem_List::where("id", "<>",$this->diadiem->id)->where("loaidiadiem_id", $this->loaidiadiem_id)->where("phone", $this->phone)->where("xa_id", $this->xa_id)->count()) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Đã tồn tại Địa điểm với các thông tin này"]);
+            return null;
+        }
+
         try {
             $idd = $this->diadiem->id;
             $this->diadiem->update($validateData);
@@ -717,7 +723,7 @@ class CaNhanLivewire extends Component
     }
 
     /**
-     * Chỉnh sửa địa điểm
+     * Chỉnh sửa Poster
      *
      * @return void
      */
@@ -747,5 +753,62 @@ class CaNhanLivewire extends Component
             $this->dispatchBrowserEvent('unblockUI');
             $this->editPosterID = false;
         }
+    }
+
+
+   /**
+     * Chỉnh sửa Poster
+     *
+     * @return void
+     */
+    public function save_edit_poster()
+    {
+        if ($this->bfo_info->cannot("edit-poster")) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể chỉnh sửa"]);
+            return null;
+        }
+
+        $this->dispatchBrowserEvent('unblockUI');
+        $validateData = $this->validate([
+            'poster_name_id' => 'required|exists:poster_names,id',
+            'mucthuong_id' => 'required|exists:poster_mucthuongs,id',
+        ]);
+
+        $this->dispatchBrowserEvent('blockUI');
+        if(!!Poster_List::where("id", "<>",$this->poster->id)->where("poster_name_id", $this->poster_name_id)->where("diadiem_id", $this->poster->diadiem_id)->count()) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Đã tồn tại Poster ".Poster_Name::find($this->poster_name_id)->name." tại địa điểm này"]);
+            return null;
+        }
+
+        try {
+            $idd = $this->poster->id;
+            $this->poster->update($validateData);
+            $this->poster = Poster_List::find($idd);
+            $this->poster->update([
+                'poster_code' => Poster_Name::find($this->poster_name_id)->name[0].sprintf("%06d",$this->poster->id),
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => implode(" - ", $e->errorInfo)]);
+            return null;
+        } catch (\Exception $e2) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => $e2->getMessage()]);
+            return null;
+        }
+
+        //Đầy thông tin về trình duyệt
+        $this->dispatchBrowserEvent('dt_draw');
+        $this->editPosterID = false;
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => "Chỉnh sửa Poster thành công thành công"]);
     }
 }
