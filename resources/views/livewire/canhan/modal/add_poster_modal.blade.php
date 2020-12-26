@@ -10,7 +10,7 @@
                 </button>
             </div>
 
-            @if ($updateMode)
+            @if ($updateMode && !$editStatus)
 
             <div class="modal-body">
                 <div class="container-fluid mx-0 px-0">
