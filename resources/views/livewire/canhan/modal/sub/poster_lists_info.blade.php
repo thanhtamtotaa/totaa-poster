@@ -19,7 +19,7 @@
                 <div class="col-12 col-xl-6 mb-3 h-max-content">
 
                     @if (!!$poster_chitiet->hinhanhs)
-                        <div>
+                        <div wire:ignore wire:key="hinhanhs_{{ $poster_chitiet->id }}">
                             <div totaa-id="blueimp-carousel" class="blueimp-gallery blueimp-gallery-carousel blueimp-gallery-controls">
                                 <div class="slides"></div>
                                 <a class="prev">‹</a>
@@ -27,12 +27,14 @@
                                 <a class="play-pause"></a>
                                 <ol class="indicator"></ol>
 
-                                @foreach ($poster_chitiet->hinhanhs as $hinhanh)
-                                    @php
-                                        $gallery = $hinhanh->anh->getGallery();
-                                    @endphp
-                                    <a totaa-blueimp-carousel href="{{ $gallery["url"] }}" mine-type="{{ $gallery["mimetype"] }}" thumbnail="{{ $gallery["thumbnail"] }}" class="img-fluid hidden"></a>
-                                @endforeach
+                                @if (!$editStatus)
+                                    @foreach ($poster_chitiet->hinhanhs as $hinhanh)
+                                        @php
+                                            $gallery = $hinhanh->anh->getGallery();
+                                        @endphp
+                                        <a totaa-blueimp-carousel href="{{ $gallery["url"] }}" mine-type="{{ $gallery["mimetype"] }}" thumbnail="{{ $gallery["thumbnail"] }}" class="img-fluid hidden"></a>
+                                    @endforeach
+                                @endif
 
                             </div>
                         </div>
