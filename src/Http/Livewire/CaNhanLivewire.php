@@ -904,4 +904,83 @@ class CaNhanLivewire extends Component
         $this->dispatchBrowserEvent('unblockUI');
         $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => "Chỉnh sửa Poster thành công thành công"]);
     }
+
+    /**
+     * Xóa Thông số Poster
+     *
+     * @return void
+     */
+    public function delete_poster_chitiet($id)
+    {
+        if (!!$id) {
+            if ($this->bfo_info->cannot("delete-poster")) {
+                $this->dispatchBrowserEvent('unblockUI');
+                $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+                return null;
+            }
+
+            if ($this->poster->trangthai_id != 5) {
+                $this->dispatchBrowserEvent('unblockUI');
+                $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể xóa"]);
+                return null;
+            }
+
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->deletePosterChiTietID = $id;
+            $this->editStatus = true;
+            $this->poster_chitiet = Poster_ChiTiet::find($this->deletePosterChiTietID);
+        } else {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->deletePosterChiTietID = false;
+        }
+    }
+
+   /**
+     * Chỉnh sửa Thông số Poster
+     *
+     * @return void
+     */
+    public function do_delete_poster_chitiet()
+    {
+        if ($this->bfo_info->cannot("delete-poster")) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Bạn không có quyền thực hiện hành động này"]);
+            return null;
+        }
+
+        if ($this->poster->trangthai_id != 5) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => "Poster này đã được duyệt, không thể xóa"]);
+            return null;
+        }
+
+        try {
+            $this->poster = $this->poster_chitiet->poster;
+            $this->poster_chitiet->delete();
+            $this->diadiem = $this->poster->diadiem;
+            $this->poster_chitiets = $this->poster->poster_chitiets;
+
+            if (!!!$this->poster->poster_chitiets->count()) {
+                $this->poster->delete();
+
+                if (!!!$this->diadiem->posters->count()) {
+                    $this->diadiem->delete();
+                }
+            }
+        } catch (\Illuminate\Database\QueryException $e) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => implode(" - ", $e->errorInfo)]);
+            return null;
+        } catch (\Exception $e2) {
+            $this->dispatchBrowserEvent('unblockUI');
+            $this->dispatchBrowserEvent('toastr', ['type' => 'warning', 'title' => "Thất bại", 'message' => $e2->getMessage()]);
+            return null;
+        }
+
+        //Đầy thông tin về trình duyệt
+        $this->dispatchBrowserEvent('dt_draw');
+        $this->deletePosterChiTietID = false;
+        $this->dispatchBrowserEvent('unblockUI');
+        $this->dispatchBrowserEvent('toastr', ['type' => 'success', 'title' => "Thành công", 'message' => "Xóa Poster thành công thành công"]);
+    }
 }
