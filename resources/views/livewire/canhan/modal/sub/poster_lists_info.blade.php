@@ -50,7 +50,8 @@
                                 <h5 class="text-info">
                                     Thông số chi tiết:
                                     @if (!!!$editPosterID && !!!$editDiaDiemID && !!!$editPosterChiTietID && !!!$deletePosterChiTietID && $poster->trangthai_id == 5)
-                                        <i wire:click.prevent="edit_poster_chitiet({{ $poster_chitiet->id }})" totaa-block-ui wire:loading.attr="disabled" class="ml-2 text-indigo fas fa-edit action-icon px-3"></i>
+                                        <i wire:click.prevent="edit_poster_chitiet({{ $poster_chitiet->id }})" totaa-block-ui wire:loading.attr="disabled" class="mx-1 text-indigo fas fa-edit action-icon px-2"></i>
+                                        <i wire:click.prevent="delete_poster_chitiet({{ $poster_chitiet->id }})" totaa-block-ui wire:loading.attr="disabled" class="mx-1 text-danger fas fa-trash-alt action-icon px-2"></i>
                                     @endif
                                 </h5>
                             </div>
@@ -154,6 +155,24 @@
                             </div>
 
                         @else
+
+                            @if ($deletePosterChiTietID == $poster_chitiet->id)
+
+                                <div class="col-12 mb-3 text-danger font-weight-semibold">
+                                    Việc xóa Vị trí dán này là KHÔNG THỂ khôi phục,bạn có chắc chắn?
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="modal-footer">
+                                    <div class="mx-auto my-0">
+                                        <button wire:click.prevent="delete_poster_chitiet(false)" class="btn btn-info" wire:loading.attr="disabled" totaa-block-ui>Hủy</button>
+                                        <button wire:click.prevent="do_delete_poster_chitiet()" class="btn btn-danger" totaa-block-ui wire:loading.attr="disabled">Xóa</button>
+                                    </div>
+                                    </div>
+                                </div>
+
+                            @endif
+
                             <div class="col-12 col-md-6">
                                 <div class="form-group">
                                     <label class="col-form-label">Hình thức Poster:</label>
