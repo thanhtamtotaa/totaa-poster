@@ -963,6 +963,8 @@ class CaNhanLivewire extends Component
             if (!!!$this->poster->poster_chitiets->count()) {
                 $this->poster->delete();
 
+                $this->dispatchBrowserEvent('hide_modal');
+
                 if (!!!$this->diadiem->posters->count()) {
                     $this->diadiem->delete();
                 }
