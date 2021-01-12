@@ -162,15 +162,15 @@ $('.modal.fade').on('shown.bs.modal', function () {
     }
 })
 
-    //$.select2_update();
-    window.addEventListener('select2_update', function(e) {
-        if ($("select.select2-totaa").length != 0) {
-            $("select.select2-totaa").each(function(e) {
-                $(this).on('select2:close', function (e) {
-                    @this.set($(this).attr("wire:model"), $(this).val());
-                });
+//$.select2_update();
+window.addEventListener('select2_update', function(e) {
+    if ($("select.select2-totaa").length != 0) {
+        $("select.select2-totaa").each(function(e) {
+            $(this).on('select2:close', function (e) {
+                @this.set($(this).attr("wire:model"), $(this).val());
             });
-        }
-    })
+        });
+    }
+})
 
 </script>
