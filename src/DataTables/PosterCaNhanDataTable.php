@@ -21,6 +21,8 @@ class PosterCaNhanDataTable extends DataTable
      */
     public function dataTable($query)
     {
+        $nv_info = Auth::user()->bfo_info;
+
         return datatables()
             ->eloquent($query)
             ->filter(function ($query) {
@@ -38,8 +40,7 @@ class PosterCaNhanDataTable extends DataTable
                     $query->where('poster_lists.trangthai_id', request('trangthai_filter'));
                 }
             }, true)
-            ->addColumn('action', function ($query) {
-                $nv_info = Auth::user()->bfo_info;
+            ->addColumn('action', function ($query) use ($nv_info) {
                 $Action_Icon="<div class='action-div icon-4 px-0 mx-1 d-flex justify-content-around text-center'>";
 
                 if ($nv_info->can("view-poster")) {
