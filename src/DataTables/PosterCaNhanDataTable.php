@@ -91,7 +91,7 @@ class PosterCaNhanDataTable extends DataTable
         $query->where(function ($query2) use ($nv_info) {
             $query2->where('poster_lists.created_by_mnv', $nv_info->mnv)
                   ->orWhere('poster_lists.belongto_mnv', $nv_info->mnv);
-        });
+        })->where('poster_lists.active', true);
 
         return $query->with(["poster_name:*", "muctrathuong:*", "trangthai:*", "quanly_by:*", 'diadiem:id,tendiadiem,chudiadiem,phone,xa_id,diachi,loaidiadiem_id', 'diadiem.xa:id,level,name,huyen_id', 'diadiem.xa.huyen:id,level,name,tinh_id', 'diadiem.xa.huyen.tinh:id,level,name', 'diadiem.loaidiadiem:*', ])
                     ->withCount(['poster_chitiets' => function (Builder $query2) {
